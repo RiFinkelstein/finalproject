@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Calendar</title>
+  <link href="calendar.css" rel="stylesheet" type="text/css"/>
+  <script defer src = "dates.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+</head>
+<body>
+<h1>Calendar</h1>
+<div class="calendar" id="calendar">
+  <div class="calendar-btn month-btn" onclick="$('#months').toggle('fast')">
+      <span id="curMonth"></span>
+      <div id="months" class="months dropdown"></div>
+  </div>
+
+  <div class="calendar-btn year-btn" onclick="$('#years').toggle('fast')">
+      <span id="curYear"></span>
+      <div id="years" class="years dropdown"></div>
+  </div>
+
+  <div class="clear"></div>
+
+  <div class="calendar-dates">
+      <div class="days">
+          <div class="day label">SUN</div>
+          <div class="day label">MON</div>
+          <div class="day label">TUE</div>
+          <div class="day label">WED</div>
+          <div class="day label">THUR</div>
+          <div class="day label">FRI</div>
+          <div class="day label">SAT</div>
+
+          <div class="clear"></div>
+      </div>
+
+      <div id="calendarDays" class="days">
+      </div>
+  </div>
+</div>
+<p></p><br>
+  <p><button onclick="location.href='main.php'">Main</button></p>
+</body>
+</html>

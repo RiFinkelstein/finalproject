@@ -1,0 +1,113 @@
+<!doctype html>
+<html>
+	<head>
+		<title>Hebcal examples</title>
+		<link rel="stylesheet" href="style.css"/>
+		<script type="text/javascript" src="client/hebcal.js"></script>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	</head>
+	<body>
+		<h1>Conversion</h1>
+		<p> this page will help you find out the zmanim of the day, when your bar mitzvah is and the dates of the yomim tovim</p>
+		<select id="textstyle">
+			<p> first choose if you will want to see the date in hebrew or english</p>
+			<option value="s">English</option>
+			<option value="h">עברית</option>
+		</select>
+		<div id="today">
+			<h2>Today</h2>
+			<span></span>
+			<pre></pre>
+			<div></div>
+		</div>
+		<div id="barmitzvah">
+			<h2>Bar/Bas Mitzvah Calculator</h2>
+			<p>to calculate when your bar or bas mitzvah will be, select the date</p>
+			<input type="date" id="barmitzvah-date" /><br/>
+			<p>select if you are male or femal</p>
+			<label><input type="radio" name="barmitzvah-gender" id="barmitzvah-gender-m" value="m" checked="checked" /> Male</label>
+			<label><input type="radio" name="barmitzvah-gender" id="barmitzvah-gender-f" value="m" /> Female</label><br/>
+			<p> select if you were born in our outside of israel</p>
+			<label><input type="radio" name="barmitzvah-location" id="barmitzvah-location-chul" value="chul" checked="checked" /> Diaspora</label>
+			<label><input type="radio" name="barmitzvah-location" id="barmitzvah-location-il" value="il" /> Israel</label><br/>
+			<p>select if you were born after sunset</p>
+			<label><input type="checkbox" name="barmitzvah-sunset" id="barmitzvah-sunset" value="sunset" /> After sunset?</label><br/>
+			<input type="submit" value="Calculate" id="barmitzvah-calc" />
+			<div id="barmitzvah-result"></div>
+		</div>
+		<div id="holidays">
+			<h2>Holidays</h2>
+			<select>
+				<option value="pesach">Pesach</option>
+				<option value="shavuot">Shavuot</option>
+				<option value="sukkot">Sukkot</option>
+				<option value="purim">Purim</option>
+				<option value="rosh">Rosh Hashanah</option>
+				<option value="chanukah">Chanukah</option>
+			</select>
+			<input type="submit" value="Calculate" id="holidays-calc" />
+			<div id="holidays-result"></div>
+		
+
+		<script type="text/javascript">
+var d = document, o, year, today;
+Hebcal.events.on('ready', function() {
+	year = new Hebcal();
+	function load() {
+		o = d.querySelector('#textstyle').value;
+		today = year.find('today')[0];
+
+		d.querySelector('#today span').innerHTML = today.toString(o) + '<br/>' + Hebcal.defaultCity;
+		d.querySelector('#today pre').innerHTML = JSON.stringify(today.getZemanim(), null, '\t');
+		d.querySelector('#today div').innerHTML = today.getSedra(o) + '<br/>' + today.holidays().map(function(h){return h.getDesc(o)}).join('<br/>');
+	}
+	load();
+
+	d.querySelector('#textstyle').onchange = load;
+
+	d.querySelector('#holidays-calc').onclick = function(){
+		var h = d.querySelector('#holidays select').value, days;
+		switch (h) {
+			case 'pesach':
+			case 'shavuot':
+			case 'sukkot':
+				days = year.find(h);
+				break;
+			case 'purim':
+				days = year.find(14, year.months.length);
+				break;
+			case 'rosh':
+				days = year.find('Rosh Hashanah');
+				break;
+			case 'chanukah':
+				days = year.find(Hebcal.range(25,33),'kislev');
+				break;
+			default:
+				days = year.find('today');
+		}
+		d.querySelector('#holidays-result').innerHTML = days.map(function(d){
+			return d.toString(o) + ', ' + d.greg().toDateString();
+		}).join('<br/>');
+	};
+
+	d.querySelector('#barmitzvah-calc').onclick = function(){
+		var male = d.querySelector('#barmitzvah-gender-m').checked,
+			il = d.querySelector('#barmitzvah-location-il').checked,
+			sunset = d.querySelector('#barmitzvah-sunset').checked;
+		var birthday = new Hebcal.HDate(d.querySelector('#barmitzvah-date').valueAsDate);
+		if (sunset) {
+			birthday = birthday.next();
+		}
+		var bm = new Hebcal.HDate(birthday).setFullYear(birthday.getFullYear() + 12 + male);
+		bm.il = il;
+
+		d.querySelector('#barmitzvah-result').innerHTML = 'Actual: ' + bm.toString(o) + ', ' + bm.greg().toDateString() + '<br/>' +
+			'Shabbat: ' + bm.onOrAfter(6).toString(o) + ', ' + bm.onOrAfter(6).greg().toDateString() + '<br/>' +
+			'Parsha: ' + bm.getSedra(o);
+	};
+}).on('almostZeman', function(zeman, time){
+	alert('It is ' + ~~(time / 1000 / 60) + ' minutes until ' + zeman + '.');
+});
+		</script>
+	</body>
+</html>
