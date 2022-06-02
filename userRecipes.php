@@ -12,6 +12,7 @@
         <h2>Recipes Page</h2>
         <?php
     include 'dbConnect.php';
+    include 'sidebar.php';
     $sql = "SELECT * FROM `recipeTable`;";
     $result = mysqli_query($conn, $sql);
     $resultCheck = mysqli_num_rows($result);
