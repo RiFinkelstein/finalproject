@@ -1,3 +1,4 @@
+<link href="style.css" rel="stylesheet" type="text/css"/>
 <?php
     require 'dbConnect.php';
     session_start();
@@ -23,3 +24,5 @@
     $query    = "INSERT INTO recipeTable(title,ingredients,instructions) VALUES ('$title', '$ingredients','$instructions')";
     $result   = mysqli_query($conn, $query);
     echo "Your recipe was added - check it out on the database.";
+    ?>
+    <p><button onclick="location.href='main.php'">Main</button></p>
